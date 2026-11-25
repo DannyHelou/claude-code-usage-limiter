@@ -1,0 +1,23 @@
+name: Windows CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  offline-tests:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -B -m unittest -v
+      - name: Test the PowerShell profile installer
+        shell: powershell
+        run: .\test-install-powershell.ps1
+      - run: python -B limiter.py demo
