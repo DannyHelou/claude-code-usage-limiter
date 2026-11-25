@@ -49,6 +49,20 @@ function claude {
     & $install -ProfilePath $profilePath -InstallRoot $installRoot
     & $uninstall -ProfilePath $profilePath -InstallRoot $installRoot
     if ([IO.File]::ReadAllText($profilePath) -cne $unchanged) { throw 'Fresh install and uninstall changed the profile.' }
+    $nested = "# >>> Coding Usage Limiter >>>`r`n" + $unchanged + $legacyBlock + "`r`n"
+    [IO.File]::WriteAllText($profilePath, $nested)
+    foreach ($operation in $install, $uninstall) {
+        $blocked = $false
+        try {
+            & $operation -ProfilePath $profilePath -InstallRoot $installRoot
+        } catch {
+            if ($_.Exception.Message -notmatch 'markers.*manual repair') { throw }
+            $blocked = $true
+        }
+        if (-not $blocked -or [IO.File]::ReadAllText($profilePath) -cne $nested) {
+            throw 'An installer operation accepted or rewrote malformed markers.'
+        }
+    }
     Write-Output 'PowerShell installer smoke tests passed.'
 } finally {
     if ([IO.Path]::GetFullPath($root).StartsWith([IO.Path]::GetTempPath(), [StringComparison]::OrdinalIgnoreCase)) {

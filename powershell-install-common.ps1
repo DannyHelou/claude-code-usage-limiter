@@ -14,7 +14,8 @@ if ([IO.File]::Exists($ProfilePath)) {
     }
 }
 $blocks = [regex]::Matches($content, $pattern)
-if ($blocks.Count -gt 1 -or ($blocks.Count -eq 0 -and ($content.Contains($start) -or $content.Contains($end)))) {
+$markerCount = @($content -split '\r?\n' | Where-Object { $_ -ceq $start -or $_ -ceq $end }).Count
+if ($blocks.Count -gt 1 -or $markerCount -ne (2 * $blocks.Count)) {
     throw "The limiter markers in $ProfilePath need manual repair."
 }
 $block = if ($blocks.Count) { $blocks[0] }
