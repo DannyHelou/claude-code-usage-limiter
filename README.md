@@ -8,7 +8,7 @@ Try the same demo with `python -B limiter.py demo`. It uses a temporary database
 
 ## Set up Claude Code
 
-Use Windows, PowerShell, Python 3.10 or later, and a current native Claude Code executable on your PATH. Download and extract the ZIP from [GitHub Releases](https://github.com/DannyHelou/claude-code-usage-limiter/releases), then run this in the extracted folder.
+Use Windows, PowerShell, Python 3.10 or later, and a current native Claude Code executable on your PATH. Download the ZIP from [GitHub Releases](https://github.com/DannyHelou/claude-code-usage-limiter/releases). Compare the result of `Get-FileHash -Algorithm SHA256 -LiteralPath <zip-path>` with the hash in the release notes. After it matches, run `Unblock-File -LiteralPath <zip-path>` before extracting so PowerShell can load the downloaded scripts under its RemoteSigned policy. If you already extracted the ZIP and PowerShell blocks the script, unblock the verified ZIP and extract it into a new folder. Then run this in the extracted folder.
 
 ```powershell
 .\install-powershell.ps1
